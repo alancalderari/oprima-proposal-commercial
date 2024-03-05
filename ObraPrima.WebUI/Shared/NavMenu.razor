@@ -1,0 +1,18 @@
+﻿<MudPaper Style="overflow:hidden; position:relative;">
+    <MudDrawer @bind-Open="@_open" Fixed="true" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true">
+        <MudNavMenu Bordered="true">
+            <MudLink Href="/">
+                <MudImage Class="ma-2" Height="40" Src="images/icon.png"/>
+            </MudLink>
+            <MudNavLink Match="NavLinkMatch.Prefix" Href="/" Icon="@Icons.Material.Filled.Home">Inicio</MudNavLink>
+            <MudNavLink Href="/lead" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Home">Lead</MudNavLink>
+            <MudNavLink Href="/apresentacao" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Home">Inicio3</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+</MudPaper>
+
+@code
+{
+    private bool _open;
+
+}

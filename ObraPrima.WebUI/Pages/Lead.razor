@@ -1,0 +1,236 @@
+﻿@page "/teste"
+@using ObraPrima.WebUI.Models.Lead
+@using ObraPrima.WebUI.Services.Contracts.Lead
+@using ObraPrima.WebUI.Shared.Dialogs
+@inject IDialogService DialogService
+@inject ILeadService LeadService
+@attribute [Authorize]
+
+<PageTitle>Lead</PageTitle>
+
+<MudText Typo="Typo.h3">Lead</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="12" Class="align-center d-flex flex-row justify-center">
+        <MudTextField @bind-Value="OrganizationName" Label="Construtora" Margin="Margin.Dense" Variant="Variant.Outlined"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Primary" Class="ml-3" @onclick="OnGetLead" Variant="Variant.Filled" Size="Size.Medium"/>
+    </MudItem>
+</MudGrid>
+
+@if (_isVisible)
+{
+    <MudTabs Elevation="2" Centered="true" Rounded="true" Class="py-3" PanelClass="pa-6">
+        <MudTabPanel Text="Proposta comercial" ToolTip="ToolTip Three">
+            <div class="">
+                <MudButton OnClick="OnOpenDialogEdit" Variant="Variant.Filled" Color="Color.Primary">Enviar proposta</MudButton>
+                <MudButton Href="/apresentacao" Variant="Variant.Filled" Color="Color.Primary">Apresentação</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Editar</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Criar - Validar se precisar tar aqui!</MudButton>
+            </div>
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudTextField ShrinkLabel @bind-Value="@_lead.Supplier.SupplierName" Label="Vendedor(a)" Variant="Variant.Text"></MudTextField>
+                    <MudTextField ShrinkLabel @bind-Value="@_lead.CompanyName" Label="Construtora" Variant="Variant.Text"></MudTextField>
+                    <MudTextField ShrinkLabel @bind-Value="@_lead.ResponsibleName" Label="Responsável" Variant="Variant.Text"></MudTextField>
+                    <MudTextField ShrinkLabel @bind-Value="@_lead.ResponsibleEmail" Label="E-mail do responsável" Variant="Variant.Text"></MudTextField>
+                    <MudTextField ShrinkLabel @bind-Value="@_lead.ResponsiblePhone" Label="Contato do responsável" Variant="Variant.Text"></MudTextField>
+
+                    @if (_lead.Proposal?.ProposalProduct != null)
+                    {
+                        <MudText Typo="Typo.subtitle1" Class="my-6">Resumo da proposta</MudText>
+                        <MudSimpleTable Hover="true">
+                            <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Valor</th>
+                                <th>Desconto</th>
+                                <th>Valor total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>@_lead.Proposal.ProposalProduct.Name</td>
+                                <td>@_lead.Proposal.ProposalProduct.Price</td>
+                                <td>@_lead.Proposal.ProposalProduct.PriceDiscount</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Taxa de adesão</td>
+                                <td>@_lead.Proposal.ProposalProduct.MembershipRate</td>
+                                <td>@_lead.Proposal.ProposalProduct.MembershipRateDiscount</td>
+                                <td>@(_lead.Proposal.ProposalProduct.MembershipRate - _lead.Proposal.ProposalProduct.MembershipRateDiscount)</td>
+                            </tr>
+                            </tbody>
+                        </MudSimpleTable>
+                        <MudText Typo="Typo.subtitle1" Class="my-6">Adicionais</MudText>
+                        <MudTable Breakpoint="Breakpoint.Sm" Items="@_lead.Proposal.ProposalProduct.ProposalProductOptionals" Hover="true">
+                            <HeaderContent>
+                                <MudTh>Produto</MudTh>
+                                <MudTh>Valor</MudTh>
+                                <MudTh>Desconto</MudTh>
+                                <MudTh>Valor total</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Produto">@context.Name</MudTd>
+                                <MudTd DataLabel="Valor">@context.Price</MudTd>
+                                <MudTd DataLabel="Desconto">@context.PriceDiscount</MudTd>
+                                <MudTd DataLabel="Valor total"></MudTd>
+                            </RowTemplate>
+                            <NoRecordsContent>
+                                <MudText Typo="Typo.h6">Sem adicional até o momento</MudText>
+                            </NoRecordsContent>
+                        </MudTable>
+                        <MudText Typo="Typo.subtitle1" Class="my-6">Forma de pagamento e condição</MudText>
+                        <MudStack>
+                            <MudPaper Class="pa-3">
+                                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                    <MudText>Forma de pagamento</MudText>
+                                    <MudText>Dropdown com as forma bloqueado</MudText>
+                                </MudStack>
+                                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                    <MudText>Condição de pagamento</MudText>
+                                    <MudText>Dropdown com as condições bloqueado</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        </MudStack>
+
+                        <MudText Typo="Typo.subtitle1" Class="my-6">Total</MudText>
+                        <MudStack>
+                            <MudPaper Class="pa-3">
+                                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                    <MudText>Subtotal</MudText>
+                                    <MudText>1real</MudText>
+                                </MudStack>
+                                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                    <MudText>Descontos</MudText>
+                                    <MudText>2real</MudText>
+                                </MudStack>
+                                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                    <MudText>Total</MudText>
+                                    <MudText>3real</MudText>
+                                </MudStack>
+                                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                                    <MudText>Taxa de adesão</MudText>
+                                    <MudText>2 real</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        </MudStack>
+                    }
+                    else
+                    {
+                        <MudText Class="my-6">Lead sem proposta criada</MudText>
+                    }
+
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    @if (_lead?.TimelineEvents != null)
+                    {
+                        <MudTimeline TimelineAlign="TimelineAlign.Start" Class="mt-3">
+                            @foreach (var timelineEvent in _lead.TimelineEvents)
+                            {
+                                <MudTimelineItem DotStyle="@($"background-color: {timelineEvent.Color}")" TimelineAlign="TimelineAlign.End">
+                                    <ItemOpposite>
+                                        <MudText Style="@($"color: {timelineEvent.Color}")" Typo="(Typo)timelineEvent.Typo">@timelineEvent!.DateEvent.Value.ToString("dd MMM").ToUpper()</MudText>
+                                    </ItemOpposite>
+                                    <ItemContent>
+                                        <MudPaper Elevation="0" Class="mt-n1">
+                                            <MudText Style="@($"color: {timelineEvent.Color}")" Typo="(Typo)timelineEvent.Typo" GutterBottom="true">@timelineEvent.Event</MudText>
+                                            @if (!string.IsNullOrWhiteSpace(timelineEvent.Description))
+                                            {
+                                                <MudText >@timelineEvent.Description</MudText>
+                                            }
+                                        </MudPaper>
+                                    </ItemContent>
+                                </MudTimelineItem>
+                            }
+                        </MudTimeline>
+                    }
+                </MudItem>
+            </MudGrid>
+        </MudTabPanel>
+        <MudTabPanel Style="width: 100%" Text="Dados da construtora" ToolTip="ToolTip One">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Editar</MudButton>
+            <MudGrid Class="pt-2">
+                <MudItem xs="12" sm="4" Class="align-center d-flex flex-row justify-center">
+                    <MudTextField @bind-Value="OrganizationName" Label="CNPJ / CPF" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="8" Class="align-center d-flex flex-row justify-center ">
+                    <MudTextField @bind-Value="OrganizationName" Label="Razão social" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudText Style="@($"color:{Colors.Grey.Lighten1};")" Typo="Typo.subtitle2">Contato</MudText>
+                <MudDivider/>
+                <MudItem xs="12" sm="4">
+                    <MudTextField @bind-Value="OrganizationName" Label="Telefone" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField @bind-Value="OrganizationName" Label="Celular" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField @bind-Value="OrganizationName" Label="E-mail" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="12" Class="align-center d-flex flex-row justify-center">
+                    <MudText Style="@($"color:{Colors.Grey.Lighten1};")" Typo="Typo.subtitle2">Endereço</MudText>
+                    <MudDivider FlexItem="true"/>
+                </MudItem>
+                <MudItem xs="12" sm="3">
+                    <MudTextField @bind-Value="OrganizationName" Label="CEP" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="9">
+                    <MudTextField @bind-Value="OrganizationName" Label="Logradouro" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField @bind-Value="OrganizationName" Label="Número" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField @bind-Value="OrganizationName" Label="Bairro" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField @bind-Value="OrganizationName" Label="Complemento" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="OrganizationName" Label="Cidade" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="OrganizationName" Label="UF" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+                </MudItem>
+            </MudGrid>
+        </MudTabPanel>
+        <MudTabPanel Text="Sócios" ToolTip="ToolTip Two">
+            <MudText>Item Two</MudText>
+        </MudTabPanel>
+        <MudTabPanel Class="w-100" Text="Anexos" ToolTip="ToolTip Three">
+            <MudText>Item Three</MudText>
+        </MudTabPanel>
+    </MudTabs>
+}
+
+@code
+{
+    private string? OrganizationName { get; set; }
+    private LeadDto? _lead;
+    private bool _isVisible;
+
+    private async void OnGetLead()
+    {
+        if (string.IsNullOrWhiteSpace(OrganizationName))
+            return;
+
+        var response = await LeadService.GetLeadByName(OrganizationName);
+
+        if (!response.IsSuccess)
+        {
+            return;
+        }
+
+        _lead = response.Data;
+        _isVisible = _lead != null;
+        OrganizationName = _lead?.CompanyName;
+
+        StateHasChanged();
+    }
+    
+    private void OnOpenDialogEdit()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<DialogEditProposal>("Simple Dialog", options);
+    }
+}

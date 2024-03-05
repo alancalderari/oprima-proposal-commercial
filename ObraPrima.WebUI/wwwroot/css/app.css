@@ -1,0 +1,215 @@
+:root {
+    --highlighted-text-title: #373737;
+    --font-color-banner: #FFFFFF;
+    --text-mark: #ff8c00;
+    --color-check: #77E64A;
+    --color-close: #E58B13;
+    --bg-sky-900: rgb(12 74 110);
+}
+
+table td,
+table th {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.table-scroll {
+    border-radius: .5rem;
+}
+
+.table-scroll table thead th {
+    font-size: 1.25rem;
+}
+
+thead {
+    top: 0;
+    position: sticky;
+}
+
+
+#plan .container p:nth-of-type(1) {
+    font-size: 40px;
+    color: var(--highlighted-text-title);
+}
+
+#plan .card {
+    border: 2px solid var(--background-gray);
+    transition: box-shadow 0.3s ease, margin 0.3s ease;
+}
+
+#plan .container {
+    max-width: 95%;
+}
+
+#plan .container .card .card-header {
+    height: 80px;
+    max-height: 80px;
+}
+
+#plan .container .card .monet {
+    background-image: url('https://obraprima.eng.br/static/images/plan-monet.jpg');
+    background-position: center;
+    background-size: cover;
+}
+
+#plan .container .card .vangogh {
+    background-image: url('https://obraprima.eng.br/static/images/vanGogh.png');
+    background-position: center;
+    background-size: cover;
+}
+
+#plan .container .card .davinci {
+    background-image: url('https://obraprima.eng.br/static/images/daVinci.jpg');
+    background-position: center;
+    background-size: cover;
+}
+
+#plan .container .card .munch {
+    background-image: url('https://obraprima.eng.br/static/images/munch.jpg');
+    background-position: center;
+    background-size: cover;
+}
+
+#plan .container .card h4 {
+    font-family: 22px;
+    z-index: 999;
+}
+
+#plan .container .card .monet h4,
+#plan .container .card .vangogh h4,
+#plan .container .card .munch h4,
+#plan .container .card .davinci h4 {
+    float: left;
+    top: 30px;
+    position: relative;
+    left: 25px;
+    text-align: left;
+    color: white;
+    clear: both;
+}
+
+#plan .container .card .monet .boxShapePlan,
+#plan .container .card .vangogh .boxShapePlan,
+#plan .container .card .munch .boxShapePlan,
+#plan .container .card .davinci .boxShapePlan {
+    display: inline-block;
+    width: 46px;
+    height: 51px;
+}
+
+#plan .container .card .monet .shape-monet {
+    position: relative;
+    background-color: var(--text-mark);
+    left: -130px;
+    top: 30px;
+    clip-path: inset(5% 20% 15% 10%);
+}
+
+#plan .container .card .vangogh .shape-vangogh {
+    position: relative;
+    background-color: #ffcd00;
+    left: -145px;
+    top: 30px;
+    clip-path: inset(5% 20% 15% 10%);
+}
+
+#plan .container .card .davinci .shape-davinci {
+    position: relative;
+    background-color: #3d5386;
+    left: -140px;
+    top: 30px;
+    clip-path: inset(5% 20% 15% 10%);
+}
+
+#plan .container .card .munch .shape-munch {
+    position: relative;
+    background-color: #08c65b;
+    left: -130px;
+    top: 30px;
+    clip-path: inset(5% 20% 15% 10%);
+}
+
+
+/* Formata a lista dos planos  */
+
+#plan .card .card-body ul {
+    text-align: left;
+    font-size: 16px;
+    line-height: 30px;
+}
+
+#plan .card .card-body ul.descricao li:nth-of-type(3) {
+    font-size: 20px;
+}
+
+#plan .card .resources li {
+    font-size: 16px;
+}
+
+#plan .card .card-body ul li span {
+    font-size: 20px;
+}
+
+/* Formata a sublista Recursos  */
+
+#plan .card .card-body ul.resources {
+    font-size: 14px;
+    line-height: 35px;
+}
+
+#plan .container p:last-of-type {
+    color: #ff8c00;
+}
+
+#plan .container a.plans {
+    margin: 15px;
+    width: 168px;
+    padding: 10px;
+    font-weight: normal;
+}
+
+#plan .card {
+    transition: box-shadow 0.3s ease, margin 0.3s ease, border 0.3s ease; /* Transições suavizadas */
+    border: 2px solid var(--bg-sky-900); /* Bordas transparentes por padrão para manter o layout */
+}
+
+#plan .card.selected {
+    box-shadow: 0 0 20px 5px rgba(255, 140, 0, 0.8); /* Sombra enfática */
+    margin-top: -5px; /* Ajusta a margem superior */
+    margin-bottom: -5px; /* Ajusta a margem inferior */
+    border-color: #ff8c00; /* Cor da borda para o card selecionado */
+}
+
+.material-icons {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.bg-sky-900 {
+    background-color: var(--bg-sky-900) !important;
+}
+
+.btn-orange {
+    background-color: #ff8c00 !important;
+    color: #fff !important;
+}
+
+.btn-check:checked + .btn-orange {
+    background-color: #ffffff !important;
+    color: #ff8c00 !important;
+    font-weight: 500 !important;
+}
+
+.btn-check:focus + .btn, .btn:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+.btn-check:not(:checked):hover + .btn, .btn:hover {
+    background-color: #cc7000 !important;
+    color: #fff !important;
+}
+
+.fs-7 {
+    font-size: 0.875rem !important;
+}

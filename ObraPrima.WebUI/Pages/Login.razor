@@ -1,0 +1,71 @@
+﻿@layout LoginLayout;
+@page "/login";
+@using ObraPrima.WebUI.Models.Auth
+@inject IAuthService Auth
+@inject NavigationManager _navegationManager;
+@attribute [AllowAnonymous]
+
+<PageTitle>Obra Prima - Login</PageTitle>
+
+<div class="row vh-100 g-0">
+    <div class="col-lg-7 position-relative d-none d-lg-block bg-sky-900">
+        <div class="row align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
+            <img src="images/logo_op.png" class="w-100" alt=""/>
+        </div>
+    </div>
+    <div class="col-lg">
+        <div class="row align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
+            <div class="col col-sm-6 col-lg-7 col-xl-6">
+                <a href="http://op.eng.br" class="d-flex justify-content-center mb-4">
+                    <img src="images/icon.png" alt=""/>
+                </a>
+                <div class="text-center mb-5">
+                    <h3 class="fw-bold"> Acessar</h3>
+                </div>
+                <EditForm Model="@_credential" OnValidSubmit="@Authenticate">
+                    <DataAnnotationsValidator/>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="material-symbols-outlined">person</i>
+                        </span>
+                        <InputText @bind-Value="@_credential.EmailAddress" placeholder="E-mail" class="form-control form-control-lg fs-6 rounded-end"/>
+                    </div>
+                    <ValidationMessage For="@(() => _credential.EmailAddress)"/>
+                    <div class="input-group mt-3">
+                        <span class="input-group-text">
+                            <i class="material-symbols-outlined">password</i>
+                        </span>
+                        <InputText type="password" @bind-Value="@_credential.Password" placeholder="Password" class="form-control form-control-lg fs-6 rounded-end"/>
+                    </div>
+                    <ValidationMessage For="@(() => _credential.Password)"/>
+                    <input type="submit" class="btn mt-3 btn-primary btn-lg w-100" value="Acessar"/>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+    private readonly Credential _credential = new();
+    
+    private async void Authenticate()
+    {
+        var response = await Auth.Authenticate(_credential);
+        
+        if (response)
+            _navegationManager.NavigateTo("/");
+    }
+
+    protected override async Task  OnInitializedAsync()
+    {
+        var user = (await AuthenticationState).User;
+        if (user.Identity!.IsAuthenticated)
+        {
+            _navegationManager.NavigateTo("/");
+        }
+        
+        await base.OnInitializedAsync();
+    }
+
+}
