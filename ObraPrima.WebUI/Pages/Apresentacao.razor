@@ -258,7 +258,7 @@
         BaseOptionals = Proposals.FirstOrDefault()?.Optionals;
     }
 
-    public class Proposal
+    public abstract class Proposal
     {
         public int? Id { get; set; }
         public int PlanId { get; set; }
@@ -282,7 +282,7 @@
         public decimal Discount { get; set; }
         public bool IsSelected { get; set; }
 
-        public record Optional
+        public abstract record Optional
         {
             public int ExtraId { get; set; }
             public int PlanId { get; set; }

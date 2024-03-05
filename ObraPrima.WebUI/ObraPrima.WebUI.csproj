@@ -20,4 +20,8 @@
         <Folder Include="wwwroot\images\"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include=".github\workflows\main.yml" />
+    </ItemGroup>
+
 </Project>
