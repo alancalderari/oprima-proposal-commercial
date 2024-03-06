@@ -110,7 +110,11 @@
                                             <td class="text-end">@proposal.PlanPrice.Monthly.ToString("N2")</td>
                                         </tr>
                                         <tr>
-                                            <td class="px-1">Adicional</td>
+                                            <td class="px-1">Adicional
+                                                @{
+                                                    GetOPtionalPrice(proposal);
+                                                }
+                                            </td>
                                             <td class="text-end">@_priceOptionalSelected.ToString("N2")</td>
                                         </tr>
                                         <tr>
@@ -286,29 +290,29 @@
 
     async Task HandleClickSelectPlan(Proposal proposal)
     {
-        var previousSelectedProposals = Proposals?.FirstOrDefault(x => x.IsSelected);
-        
-        if (previousSelectedProposals is not null && previousSelectedProposals == proposal)
-            return;
-        
-        if (previousSelectedProposals is not null)
-            ResetValuesPreviousSelectedPlan(previousSelectedProposals);
+        // var previousSelectedProposals = Proposals?.FirstOrDefault(x => x.IsSelected);
+        //
+        // if (previousSelectedProposals is not null && previousSelectedProposals == proposal)
+        //     return;
+        //
+        // if (previousSelectedProposals is not null)
+        //     ResetValuesPreviousSelectedPlan(previousSelectedProposals);
 
         Proposals?.ForEach(x => x.IsSelected = false);
 
         proposal.IsSelected = !proposal.IsSelected;
 
-        if (proposal.IsSelected)
-        {
-            proposal.PricePerPeriod.TryGetValue(_period, out var price);
-            _priceSelected += price;
-        }
-        else
-        {
-            _priceSelected = 0.00;
-        }
+        // if (proposal.IsSelected)
+        // {
+        //     proposal.PricePerPeriod.TryGetValue(_period, out var price);
+        //     _priceSelected += price;
+        // }
+        // else
+        // {
+        //     _priceSelected = 0.00;
+        // }
 
-        BaseOptionals = proposal.Optionals;
+        // BaseOptionals = proposal.Optionals;
     }
 
     private void ResetValuesPreviousSelectedPlan(Proposal? previousSelectedProposal)
@@ -376,6 +380,12 @@
             "CPU" => "Cartão (pg único) - 10%",
             _ => string.Empty
         };
+    }
+    
+    private void GetOPtionalPrice(Proposal proposal)
+    {
+        var price = proposal.Optionals?.Where(x => x.IsSelected).Sum(x => x.OptionalPrice!.Monthly);
+        _priceOptionalSelected = price ?? 0.00;
     }
 
     private async Task ScrollToElementById(string elementId)
