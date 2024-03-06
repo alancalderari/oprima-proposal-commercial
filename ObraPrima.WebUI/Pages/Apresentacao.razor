@@ -11,8 +11,13 @@
 <div class="container-fluid h-100 ">
 <div id="plan" class="h-100 row text-center bg-sky-900">
     <div class="container h-100">
-        <div class="row fs-5 fw-bold text-center text-white pt-3">
-            <span>Selecione o periodo</span>
+        <div class="float-start mt-3">
+            <a href="https://op.eng.br/">
+                <img src="images/logo_obra_prima.png" height="40" alt="Obra Prima">
+            </a>
+        </div>
+        <div class="row fs-5 fw-bold pt-3 text-center text-white">
+            <span style="position: relative; left: -80px">Selecione o periodo</span>
         </div>
         <div class="fs-5 fw-bold my-3">
             <input type="radio" class="btn-check" @onchange="HandleChangePeriod" name="options" id="Mensal" value="Monthly" checked autocomplete="off">
@@ -27,46 +32,45 @@
             <input type="radio" class="btn-check" name="options" @onchange="HandleChangePeriod" value="Annual" id="Anual" autocomplete="off">
             <label class="btn btn-orange" for="Anual">Anual</label>
         </div>
-        <div class="row fs-5 fw-bold text-center text-white pb-3">
-            <span>Selecione a condição de pagamento</span>
-        </div>
-        <div class="d-flex justify-content-center pb-4">
-            <select class="form-select w-25" @onchange="HandleChangeCondition" >
-                <option value="Boleto" selected>Boleto</option>
-                <option value="CR">Cartão recorrente</option>
-                <option value="CPU">Cartão (pg único)</option>
-            </select>
-        </div>
         <div class="row row-cols-1 row-cols-md-4 mb-3">
             @foreach (var proposal in Proposals!)
             {
                 <div class="col">
                     <div class="card mb-4 rounded-3 shadow @(proposal.IsSelected ? "selected" : "")" @onclick="() => { HandleClickSelectPlan(proposal); }" role="button">
                         <div class="card-header py-3 @proposal.Name.Replace(" ", "").ToLower()">
-                            <h4 class="my-0 fw-normal">@proposal.Name</h4>
+                            <h4 class="my-0 fs-4 fw-normal">@proposal.Name</h4>
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
-                                <ul class="list-unstyled mt-3 mb-0">
+                                <ul class="list-unstyled mb-0">
                                     <li>
                                         <MudIcon Icon="@Icons.Material.Filled.Foundation"/>
-                                        <span class="ml-2 fs-6 align-middle">Projetos: <strong>@(proposal.QuantityProject > 0 ? $"até {proposal.QuantityProject}" : "Ilimitado")</strong> </span>
+                                        <span class="ml-1 fs-6 align-middle">Projetos: <strong>@(proposal.QuantityProject > 0 ? $"até {proposal.QuantityProject}" : "Ilimitado")</strong> </span>
                                     </li>
                                     <li>
                                         <MudIcon Icon="@Icons.Material.Filled.Person"/>
-                                        <span class="ml-2 fs-6 align-middle">Usuários: <strong>@(proposal.QuantityUser > 0 ? $"até {proposal.QuantityUser}" : "Ilimitado")</strong> </span>
+                                        <span class="ml-1 fs-6 align-middle">Usuários: <strong>@(proposal.QuantityUser > 0 ? $"até {proposal.QuantityUser}" : "Ilimitado")</strong> </span>
                                     </li>
                                     <li>
                                         <MudIcon Icon="@Icons.Material.Filled.Storage"/>
-                                        <span class="ml-2 fs-6 align-middle"><strong>@(proposal.QuantityDisk / 1000)GB</strong> de espaço</span>
+                                        <span class="ml-1 fs-6 align-middle"><strong>@(proposal.QuantityDisk / 1000)GB</strong> de espaço</span>
                                     </li>
                                 </ul>
-                                <div class="my-3 ">
-                                    <h3 class="card-title">
-                                        <span class="fs-2">R$ @(proposal.PlanPrice.Monthly.ToString("N2"))</span>
-                                        <br/>
-                                        <small class="float-end fs-6 text-muted">/ <span>mês</span></small>
-                                    </h3>
+                                <div class="text-end" style="height: 120px;">
+                                    <span class="fs-7">Mensalidade</span>
+                                    <br/>
+                                    <span class="fs-4 fw-bold
+                                        @(_period == nameof(proposal.PlanPrice.Monthly) || proposal.Name.Contains("Monet") ? "" : "text-decoration-line-through")">
+                                        R$ @(proposal.PlanPrice.Monthly.ToString("N2"))
+                                    </span>
+                                    @if (_period != nameof(proposal.PlanPrice.Monthly) && !proposal.Name.Contains("Monet"))
+                                    {
+                                        <div>
+                                            <span class="fs-7 ">Desconto @GetDiscountPlan(proposal)</span>
+                                            <br/>
+                                            <span class="fs-4 fw-bold text-success">R$ @proposal.PricePerPeriod[_period].ToString("N2")</span>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                             <div class="table-responsive-md pt-3">
@@ -102,40 +106,54 @@
                                     </tbody>
                                 </MudSimpleTable>
                             </div>
-                                <div class="pt-3">
-                                    <MudSimpleTable Dense="true" Elevation="0">
-                                        <tbody>
+                            <div class="pt-3 pl-8">
+                                <MudSimpleTable Dense="true" Elevation="0">
+                                    <tbody>
+                                    <tr>
+                                        <td class="px-1">Valor do plano</td>
+                                        <td class="pr-0 text-end">@proposal.PricePerPeriod[_period].ToString("N2")</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-1">
+                                            Adicional
+                                            @{
+                                                GetOPtionalPrice(proposal);
+                                            }
+                                        </td>
+                                        <td class="pr-0 text-end">@_priceOptionalSelected.ToString("N2")</td>
+                                    </tr>
+                                    @if (_period != nameof(proposal.PlanPrice.Monthly) && _discountType != "Boleto")
+                                    {
                                         <tr>
-                                            <td class="px-1">Valor do plano</td>
-                                            <td class="text-end">@proposal.PlanPrice.Monthly.ToString("N2")</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-1">Adicional
-                                                @{
-                                                    GetOPtionalPrice(proposal);
-                                                }
-                                            </td>
-                                            <td class="text-end">@_priceOptionalSelected.ToString("N2")</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-1">Desconto (@GetDiscountPlan(proposal))</td>
-                                            <td class="@(_discountPlan == 0 ? "":"text-danger") text-end">@_discountPlan.ToString("N2")</td>
+                                            <td class="px-1">Plano + adicionais</td>
+                                            <td class="pr-0 text-end">R$ @((proposal.PricePerPeriod[_period] + _priceOptionalSelected).ToString("N2"))</td>
                                         </tr>
                                         <tr>
                                             <td class="px-1">Desconto @GetDiscountCondition(proposal)</td>
-                                            <td class="@(_discountCondition == 0 ? "":"text-danger") text-end">@_discountCondition.ToString("N2")</td>
+                                            <td class="@(_discountCondition == 0 ? "" : "text-danger") pr-0 text-end">@_discountCondition.ToString("N2")</td>
                                         </tr>
-                                        <tr>
-                                            <td class="px-1 fs-5 fw-bold">Valor total</td>
-                                            <td class="text-end fs-5 fw-bold">@((proposal.PlanPrice.Monthly + _discountPlan + _discountCondition + _priceOptionalSelected).ToString("N2"))</td>
-                                        </tr>
-                                        </tbody>
-                                    </MudSimpleTable>
-                                </div>
+                                    }
+                                    <tr>
+                                        <td class="px-1 fs-5 fw-bold">Valor mensalidade</td>
+                                        <td class="text-end fs-5 pr-0 fw-bold">@((proposal.PricePerPeriod[_period] + _discountCondition + _priceOptionalSelected).ToString("N2"))</td>
+                                    </tr>
+                                    </tbody>
+                                </MudSimpleTable>
+                            </div>
                         </div>
                     </div>
                 </div>
             }
+        </div>
+        <div class="row fs-5 fw-bold text-center text-white pb-3">
+            <span>Selecione a condição de pagamento</span>
+        </div>
+        <div class="d-flex justify-content-center pb-4">
+            <select class="form-select w-25" @onchange="HandleChangeCondition">
+                <option value="Boleto" selected>Boleto</option>
+                <option value="CR">Cartão recorrente</option>
+                <option value="CPU">Cartão (pg único)</option>
+            </select>
         </div>
     </div>
 </div>
@@ -263,10 +281,10 @@
     }
 
     async Task HandleChangeCondition(ChangeEventArgs args)
-    {   
+    {
         _discountType = args.Value.ToString();
-        
     }
+
     async Task HandleChangeOptional(Proposal.Optional optional)
     {
         var plan = Proposals.FirstOrDefault(x => x.IsSelected);
@@ -315,39 +333,39 @@
         // BaseOptionals = proposal.Optionals;
     }
 
-    private void ResetValuesPreviousSelectedPlan(Proposal? previousSelectedProposal)
-    {
-        if (previousSelectedProposal is not null)
-            _priceSelected -= previousSelectedProposal.PricePerPeriod[_period];
+    // private void ResetValuesPreviousSelectedPlan(Proposal? previousSelectedProposal)
+    // {
+    //     if (previousSelectedProposal is not null)
+    //         _priceSelected -= previousSelectedProposal.PricePerPeriod[_period];
+    //
+    //     Proposals?.ForEach(x => x.IsSelected = false);
+    //
+    //     var previousSelectedOptional = previousSelectedProposal?.Optionals;
+    //     if (previousSelectedOptional != null)
+    //         ResetValuesPreviousSelectedOptionals(previousSelectedOptional);
+    // }
+    //
+    // private void ResetValuesPreviousSelectedOptionals(IEnumerable<Proposal.Optional> previousSelectedOptional)
+    // {
+    //     foreach (var optional in previousSelectedOptional.Where(x => x.IsSelected).ToList())
+    //     {
+    //         optional.IsSelected = false;
+    //         _priceOptionalSelected -= optional.OptionalPrice!.Monthly;
+    //     }
+    // }
 
-        Proposals?.ForEach(x => x.IsSelected = false);
-
-        var previousSelectedOptional = previousSelectedProposal?.Optionals;
-        if (previousSelectedOptional != null)
-            ResetValuesPreviousSelectedOptionals(previousSelectedOptional);
-    }
-
-    private void ResetValuesPreviousSelectedOptionals(IEnumerable<Proposal.Optional> previousSelectedOptional)
-    {
-        foreach (var optional in previousSelectedOptional.Where(x => x.IsSelected).ToList())
-        {
-            optional.IsSelected = false;
-            _priceOptionalSelected -= optional.OptionalPrice!.Monthly;
-        }
-    }
-    
     private string GetDiscountPlan(Proposal proposal)
     {
         var pricePerPeriod = proposal.PricePerPeriod[_period];
         var priceDefault = proposal.PlanPrice.Monthly;
-        
+
         var percentage = (priceDefault - pricePerPeriod) / priceDefault * 100;
-        
+
         percentage = Math.Round(percentage, 2);
-        
+
         var priceDiscountPlan = priceDefault - pricePerPeriod;
         _discountPlan = priceDiscountPlan == 0 ? priceDiscountPlan : -priceDiscountPlan;
-        
+
         return _period switch
         {
             "Monthly" => $"Mensal",
@@ -357,10 +375,10 @@
             _ => string.Empty
         };
     }
+
     private string GetDiscountCondition(Proposal proposal)
     {
-        
-        var priceDefault = proposal.PlanPrice.Monthly;
+        var priceDefault = proposal.PricePerPeriod[_period] + _priceOptionalSelected;
         var discountPercentage = _discountType switch
         {
             "Boleto" => 0,
@@ -370,18 +388,18 @@
         };
 
         var discount = priceDefault * discountPercentage;
-        
+
         _discountCondition = discount == 0 ? discount : -discount;
-        
+
         return _discountType switch
         {
-            "Boleto" => "Boleto",
-            "CR" => "Cartão recorrente - 5%",
-            "CPU" => "Cartão (pg único) - 10%",
+            "Boleto" => "boleto",
+            "CR" => "cartão recorrente - 5%",
+            "CPU" => "cartão (pg único) - 10%",
             _ => string.Empty
         };
     }
-    
+
     private void GetOPtionalPrice(Proposal proposal)
     {
         var price = proposal.Optionals?.Where(x => x.IsSelected).Sum(x => x.OptionalPrice!.Monthly);
@@ -464,7 +482,6 @@
             public double Annual { get; set; }
         }
     }
-    
-    
-    
+
+
 }

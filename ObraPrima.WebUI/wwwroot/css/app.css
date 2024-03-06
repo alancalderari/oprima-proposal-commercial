@@ -72,7 +72,6 @@ thead {
 }
 
 #plan .container .card h4 {
-    font-family: 22px;
     z-index: 999;
 }
 
@@ -96,38 +95,6 @@ thead {
     display: inline-block;
     width: 46px;
     height: 51px;
-}
-
-#plan .container .card .monet .shape-monet {
-    position: relative;
-    background-color: var(--text-mark);
-    left: -130px;
-    top: 30px;
-    clip-path: inset(5% 20% 15% 10%);
-}
-
-#plan .container .card .vangogh .shape-vangogh {
-    position: relative;
-    background-color: #ffcd00;
-    left: -145px;
-    top: 30px;
-    clip-path: inset(5% 20% 15% 10%);
-}
-
-#plan .container .card .davinci .shape-davinci {
-    position: relative;
-    background-color: #3d5386;
-    left: -140px;
-    top: 30px;
-    clip-path: inset(5% 20% 15% 10%);
-}
-
-#plan .container .card .munch .shape-munch {
-    position: relative;
-    background-color: #08c65b;
-    left: -130px;
-    top: 30px;
-    clip-path: inset(5% 20% 15% 10%);
 }
 
 
