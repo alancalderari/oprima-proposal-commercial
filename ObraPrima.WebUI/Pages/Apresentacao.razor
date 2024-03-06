@@ -2,208 +2,272 @@
 @layout ApresentacaoLayout;
 @using System.Text.Json
 @using ObraPrima.WebUI.Models
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
 <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet"/>
 
 <PageTitle> Apresentação - Obra Prima</PageTitle>
 
-    <div class="container-fluid">
-        <div id="plan" class="row text-center bg-sky-900">
-            <div class="container vh-100">
-                <div class="row fs-5 fw-bold text-center text-white pt-3">
-                    <span>Selecione o plano</span>
-                </div>
-                <div class="fs-5 fw-bold my-3">
-                    <input type="radio" class="btn-check" @onchange="HandleChangePeriod" name="options" id="Mensal" value="Monthly" checked autocomplete="off">
-                    <label class="btn btn-orange" for="Mensal">Mensal</label>
+<div class="container-fluid h-100 ">
+<div id="plan" class="h-100 row text-center bg-sky-900">
+    <div class="container h-100">
+        <div class="row fs-5 fw-bold text-center text-white pt-3">
+            <span>Selecione o periodo</span>
+        </div>
+        <div class="fs-5 fw-bold my-3">
+            <input type="radio" class="btn-check" @onchange="HandleChangePeriod" name="options" id="Mensal" value="Monthly" checked autocomplete="off">
+            <label class="btn btn-orange" for="Mensal">Mensal</label>
 
-                    <input type="radio" class="btn-check" @onchange="HandleChangePeriod" name="options" value="Quarterly" id="Trimestral" autocomplete="off">
-                    <label class="btn btn-orange" for="Trimestral">Trimestral</label>
+            <input type="radio" class="btn-check" @onchange="HandleChangePeriod" name="options" value="Quarterly" id="Trimestral" autocomplete="off">
+            <label class="btn btn-orange" for="Trimestral">Trimestral</label>
 
-                    <input type="radio" class="btn-check" @onchange="HandleChangePeriod" name="options" value="SemiAnnual" id="Semestral" autocomplete="off">
-                    <label class="btn btn-orange" for="Semestral">Semestral</label>
+            <input type="radio" class="btn-check" @onchange="HandleChangePeriod" name="options" value="SemiAnnual" id="Semestral" autocomplete="off">
+            <label class="btn btn-orange" for="Semestral">Semestral</label>
 
-                    <input type="radio" class="btn-check" name="options" @onchange="HandleChangePeriod" value="Annual" id="Anual" autocomplete="off">
-                    <label class="btn btn-orange" for="Anual">Anual</label>
-                </div>
-                <div class="row row-cols-1 row-cols-md-4 mb-3">
-                    @foreach (var proposal in Proposals)
-                    {
-                        <div class="col">
-                            <div class="card mb-4 rounded-3 shadow @(proposal.IsSelected ? "selected" : "")" @onclick="() => { HandleClickSelectPlan(proposal); }" role="button">
-                                <div class="card-header py-3 @proposal.Name.Replace(" ", "").ToLower()">
-                                    <h4 class="my-0 fw-normal">@proposal.Name</h4>
-                                    <div class="boxShapePlan shape-@proposal.Name.Replace(" ", "").ToLower()">&nbsp;</div>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-unstyled mt-3 mb-0 descricao">
-                                        <li>
-                                            <MudIcon Icon="@Icons.Material.Filled.Foundation"/>
-                                            <span class="ml-2 fs-8">Projetos: <strong>@(proposal.QuantityProject > 0 ? $"até {proposal.QuantityProject}" : "Ilimitado")</strong> </span>
-                                        </li>
-                                        <li>
-                                            <MudIcon Icon="@Icons.Material.Filled.Person"/>
-                                            <span class="ml-2 fs-8">Usuários: <strong>@(proposal.QuantityUser > 0 ? $"até {proposal.QuantityUser}" : "Ilimitado")</strong> </span>
-                                        </li>
-                                        <li>
-                                            <MudIcon Icon="@Icons.Material.Filled.Storage"/>
-                                            <span class="ml-2 fs-8"><strong>@(proposal.QuantityDisk / 1000)GB</strong> de espaço</span>
-                                        </li>
-                                    </ul>
-                                    <div class="my-3">
-                                        <h3 class="card-title">
-                                            <span>R$ @proposal.PricePerPeriod[Period]</span>
-                                            <small class="text-muted">/ <span>mês</span></small>
-                                        </h3>
-                                    </div>
-                                    <div class="table-responsive-md">
-                                        <table class="table table-borderless">
-                                            <tbody>
-                                            @foreach (var optional in proposal.Optionals)
-                                            {
-                                                <tr>
-                                                    <td>
-                                                        <MudIcon Icon="@Proposal.Optional.Icon[optional.ExtraId]"/>
-                                                    </td>
-                                                    <td class="text-start fs-7 pl-0 pr-0">@optional.Name</td>
-                                                    @if (optional.OptionalPrice!.Monthly > 0 && !optional.IsSelected)
-                                                    {
-                                                        <td class="fs-7 text-end fw-bold">R$ @optional.OptionalPrice!.Monthly</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td class="fs-7 text-end fw-bold">
-                                                            <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Check"/>
-                                                        </td>
-                                                    }
-                                                </tr>
-                                            }
-                                            </tbody>
-                                        </table>
-                                    </div>
+            <input type="radio" class="btn-check" name="options" @onchange="HandleChangePeriod" value="Annual" id="Anual" autocomplete="off">
+            <label class="btn btn-orange" for="Anual">Anual</label>
+        </div>
+        <div class="row fs-5 fw-bold text-center text-white pb-3">
+            <span>Selecione a condição de pagamento</span>
+        </div>
+        <div class="d-flex justify-content-center pb-4">
+            <select class="form-select w-25" @onchange="HandleChangeCondition" >
+                <option value="Boleto" selected>Boleto</option>
+                <option value="CR">Cartão recorrente</option>
+                <option value="CPU">Cartão (pg único)</option>
+            </select>
+        </div>
+        <div class="row row-cols-1 row-cols-md-4 mb-3">
+            @foreach (var proposal in Proposals!)
+            {
+                <div class="col">
+                    <div class="card mb-4 rounded-3 shadow @(proposal.IsSelected ? "selected" : "")" @onclick="() => { HandleClickSelectPlan(proposal); }" role="button">
+                        <div class="card-header py-3 @proposal.Name.Replace(" ", "").ToLower()">
+                            <h4 class="my-0 fw-normal">@proposal.Name</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <ul class="list-unstyled mt-3 mb-0">
+                                    <li>
+                                        <MudIcon Icon="@Icons.Material.Filled.Foundation"/>
+                                        <span class="ml-2 fs-6 align-middle">Projetos: <strong>@(proposal.QuantityProject > 0 ? $"até {proposal.QuantityProject}" : "Ilimitado")</strong> </span>
+                                    </li>
+                                    <li>
+                                        <MudIcon Icon="@Icons.Material.Filled.Person"/>
+                                        <span class="ml-2 fs-6 align-middle">Usuários: <strong>@(proposal.QuantityUser > 0 ? $"até {proposal.QuantityUser}" : "Ilimitado")</strong> </span>
+                                    </li>
+                                    <li>
+                                        <MudIcon Icon="@Icons.Material.Filled.Storage"/>
+                                        <span class="ml-2 fs-6 align-middle"><strong>@(proposal.QuantityDisk / 1000)GB</strong> de espaço</span>
+                                    </li>
+                                </ul>
+                                <div class="my-3 ">
+                                    <h3 class="card-title">
+                                        <span class="fs-2">R$ @(_period == "Monthly" ? proposal.PricePerPeriod[_period] : proposal.PricePerPeriod[_period].ToString("N2"))</span>
+                                        <br/>
+                                        <small class="float-end fs-6 text-muted">/ <span>mês</span></small>
+                                    </h3>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-        <div class="row bg-light pb-3">
-            <div class="row fs-5 fw-bold row text-center py-3">
-                <span>Configure o plano</span>
-            </div>
-            <div class="container w-50">
-                <div class="row justify-content-center">
-                    <div class="card border-0 shadow">
-                        <div class="card-body p-0">
-                            <div class="table-responsive table-scroll">
-                                <MudSimpleTable Hover="true">
-                                    <thead>
-                                    <tr>
-                                        <th>Produto</th>
-                                        <th>Valor R$</th>
-                                        <th>Desconto R$</th>
-                                        <th>#</th>
-                                    </tr>
-                                    </thead>
+                            <div class="table-responsive-md pt-3">
+                                <MudSimpleTable Elevation="0" Class="pa-0">
                                     <tbody>
-                                    @foreach (var optional in BaseOptionals)
+                                    @foreach (var optional in proposal.Optionals!)
                                     {
                                         <tr>
-                                            <td>@optional.Name</td>
-                                            <td>@optional.OptionalPrice.Monthly</td>
-                                            <td></td>
-                                            <td>
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" @onchange="() => { HandleChangeOptional(optional); }" disabled="@optional.IsOptional" checked="@(optional.IsOptional || optional.IsSelected)" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                                                </div>
+                                            <td class="pa-0">
+                                                <MudIcon Icon="@Proposal.Optional.Icon[optional.ExtraId]"/>
                                             </td>
+                                            <td class="text-start fs-7 px-1 py-2">@optional.Name</td>
+                                            <td class="pa-0">
+                                                @if (!optional.IsOptional)
+                                                {
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" @onchange="() => { HandleChangeOptional(optional); }" disabled="@optional.IsOptional" checked="@(optional.IsOptional || optional.IsSelected)" type="checkbox" role="switch">
+                                                    </div>
+                                                }
+                                            </td>
+                                            @if (optional.OptionalPrice!.Monthly > 0 && !optional.IsSelected)
+                                            {
+                                                <td style="width: 60px;" class="fs-7 text-start fw-bold pa-0">R$ @optional.OptionalPrice!.Monthly</td>
+                                            }
+                                            else
+                                            {
+                                                <td style="width: 60px;" class="fs-7 text-end p-0">
+                                                    <MudIcon Style="@($"color: var(--color-sky-900)")" Icon="@Icons.Material.Filled.Check"/>
+                                                </td>
+                                            }
                                         </tr>
                                     }
                                     </tbody>
                                 </MudSimpleTable>
                             </div>
+                            @if (proposal.IsSelected)
+                            {
+                                <div class="pt-3">
+                                    <MudSimpleTable Dense="true" Elevation="0">
+                                        <tbody>
+                                        <tr>
+                                            <td class="px-1">Valor do plano</td>
+                                            <td class="text-end">@proposal.PlanPrice.Monthly.ToString("N2")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-1">Adicional</td>
+                                            <td class="text-end">@_priceOptionalSelected.ToString("N2")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-1">Desconto (@GetDiscountPlan(proposal))</td>
+                                            <td class="@(_discountPlan == 0 ? "":"text-danger") text-end">@_discountPlan.ToString("N2")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-1">Desconto @GetDiscountCondition(proposal)</td>
+                                            <td class="@(_discountCondition == 0 ? "":"text-danger") text-end">@_discountCondition.ToString("N2")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-1 fs-5 fw-bold">Valor total</td>
+                                            <td class="text-end fs-5 fw-bold">@((proposal.PlanPrice.Monthly + _discountPlan + _discountCondition + _priceOptionalSelected).ToString("N2"))</td>
+                                        </tr>
+                                        </tbody>
+                                    </MudSimpleTable>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row bg-light pb-5">
-            <div class="row fs-5 fw-bold text-center pb-3">
-                <span>Forma de pagamento</span>
-            </div>
-            <div class="container w-50">
-                <div class="row justify-content-center">
-                    <div class="card border-0 shadow">
-                        <div class="card-body">
-                            <table class="table">
-                                <tbody>
-                                <tr>
-                                    <td class="text-muted">Forma de pagamento</td>
-                                    <td class="text-end w-25">
-                                        <select class="form-select FormaPagamento">
-                                            <option value="1">Boleto</option>
-                                            <option value="2">Cartão de crédito</option>
-                                            <option value="3">Pixola</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Condição de pagamento</td>
-                                    <td class="text-end w-25">
-                                        <select class="form-select CondicaoPagamento">
-                                            <option value="1">À vista</option>
-                                            <option value="2">2 vezes</option>
-                                            <option value="3">3 vezes</option>
-                                            <option value="4">4 vezes</option>
-                                            <option value="5">5 vezes</option>
-                                            <option value="6">6 vezes</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Desconto</td>
-                                    <td class="text-end w-25">
-                                        <input class="w-100 Desconto" type="text"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Taxa de adesão</td>
-                                    <td class="text-end fw-bold fs-6 TaxaAdesao">R$ 1.200,00</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Subtotal</td>
-                                    <td class="text-end fw-bold fs-6 PrecoSubtotal">R$ 0,00</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Total</td>
-                                    <td class="text-end fw-bold fs-5 PrecoTotal">R$ 0,00</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
+</div>
+@* <div class="row bg-light pb-3"> *@
+@*     <div class="row fs-5 fw-bold row text-center py-3"> *@
+@*         <span>Configure o plano</span> *@
+@*     </div> *@
+@*     <div class="container w-50"> *@
+@*         <div class="row justify-content-center"> *@
+@*             <div class="card border-0 shadow"> *@
+@*                 <div class="card-body p-0"> *@
+@*                     <div class="table-responsive table-scroll"> *@
+@*                         <MudSimpleTable Hover="true"> *@
+@*                             <thead> *@
+@*                             <tr> *@
+@*                                 <th>Produto</th> *@
+@*                                 <th>Valor R$</th> *@
+@*                                 <th>Desconto R$</th> *@
+@*                                 <th>#</th> *@
+@*                             </tr> *@
+@*                             </thead> *@
+@*                             <tbody> *@
+@*                             @foreach (var optional in BaseOptionals) *@
+@*                             { *@
+@*                                 <tr> *@
+@*                                     <td>@optional.Name</td> *@
+@*                                     <td>@optional.OptionalPrice.Monthly.ToString("N2")</td> *@
+@*                                     <td></td> *@
+@*                                     <td> *@
+@*                                         <div class="form-check form-switch"> *@
+@*                                             <input class="form-check-input" @onchange="() => { HandleChangeOptional(optional); }" disabled="@optional.IsOptional" checked="@(optional.IsOptional || optional.IsSelected)" type="checkbox" role="switch" id="flexSwitchCheckDefault"> *@
+@*                                         </div> *@
+@*                                     </td> *@
+@*                                 </tr> *@
+@*                             } *@
+@*                             </tbody> *@
+@*                         </MudSimpleTable> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* <div class="row bg-light pb-5"> *@
+@*     <div class="row fs-5 fw-bold text-center pb-3"> *@
+@*         <span>Forma de pagamento</span> *@
+@*     </div> *@
+@*     <div class="container w-50"> *@
+@*         <div class="row justify-content-center"> *@
+@*             <div class="card border-0 shadow"> *@
+@*                 <div class="card-body"> *@
+@*                     <table class="table"> *@
+@*                         <tbody> *@
+@*                         <tr> *@
+@*                             <td class="text-muted">Forma de pagamento</td> *@
+@*                             <td class="text-end w-25"> *@
+@*                                 <select class="form-select FormaPagamento"> *@
+@*                                     <option value="1">Boleto</option> *@
+@*                                     <option value="2">Cartão de crédito</option> *@
+@*                                     <option value="3">Pixola</option> *@
+@*                                 </select> *@
+@*                             </td> *@
+@*                         </tr> *@
+@*                         <tr> *@
+@*                             <td class="text-muted">Condição de pagamento</td> *@
+@*                             <td class="text-end w-25"> *@
+@*                                 <select class="form-select CondicaoPagamento"> *@
+@*                                     <option value="1">À vista</option> *@
+@*                                     <option value="2">2 vezes</option> *@
+@*                                     <option value="3">3 vezes</option> *@
+@*                                     <option value="4">4 vezes</option> *@
+@*                                     <option value="5">5 vezes</option> *@
+@*                                     <option value="6">6 vezes</option> *@
+@*                                 </select> *@
+@*                             </td> *@
+@*                         </tr> *@
+@*                         <tr> *@
+@*                             <td class="text-muted">Desconto</td> *@
+@*                             <td class="text-end w-25"> *@
+@*                                 <input class="w-100 Desconto" type="text"/> *@
+@*                             </td> *@
+@*                         </tr> *@
+@*                         <tr> *@
+@*                             <td class="text-muted">Taxa de adesão</td> *@
+@*                             <td class="text-end fw-bold fs-6 TaxaAdesao">R$ 1.200,00</td> *@
+@*                         </tr> *@
+@*                         <tr> *@
+@*                             <td class="text-muted">Subtotal</td> *@
+@*                             <td class="text-end fw-bold fs-6 PrecoSubtotal">R$ 0,00</td> *@
+@*                         </tr> *@
+@*                         <tr> *@
+@*                             <td class="text-muted">Total</td> *@
+@*                             <td class="text-end fw-bold fs-5 PrecoTotal">R$ @PriceSelected.ToString("N2")</td> *@
+@*                         </tr> *@
+@*                         </tbody> *@
+@*                     </table> *@
+@*                 </div> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+</div>
 
 @code {
-    private bool isSelectedDefault = true;
     private const string Json = "{\"data\":[{\"id\":null,\"planId\":2,\"name\":\"Monet\",\"quantityProject\":2,\"quantityUser\":1,\"quantityDisk\":2000,\"optionals\":[{\"extraId\":5,\"planId\":2,\"name\":\"Aplicativo móvel\",\"discount\":0,\"optionalPrice\":{\"monthly\":69,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":6,\"planId\":2,\"name\":\"Portal do cliente\",\"discount\":0,\"optionalPrice\":{\"monthly\":69,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":10,\"planId\":2,\"name\":\"Controle de estoque\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":12,\"planId\":2,\"name\":\"Integração NF-e - Pacote 100\",\"discount\":0,\"optionalPrice\":{\"monthly\":69,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":14,\"planId\":2,\"name\":\"Alçadas de aprovação\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":18,\"planId\":2,\"name\":\"Mão de obra\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":19,\"planId\":2,\"name\":\"Integração Asaas\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false}],\"planPrice\":{\"monthly\":399,\"quarterly\":399,\"semiAnnual\":399,\"annual\":399},\"membershipRate\":0,\"discount\":0,\"isSelected\":false,\"proposalPeriod\":null},{\"id\":null,\"planId\":3,\"name\":\"Van Gogh\",\"quantityProject\":5,\"quantityUser\":3,\"quantityDisk\":5000,\"optionals\":[{\"extraId\":5,\"planId\":3,\"name\":\"Aplicativo móvel\",\"discount\":0,\"optionalPrice\":{\"monthly\":69,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":6,\"planId\":3,\"name\":\"Portal do cliente\",\"discount\":0,\"optionalPrice\":{\"monthly\":69,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":10,\"planId\":3,\"name\":\"Controle de estoque\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":12,\"planId\":3,\"name\":\"Integração NF-e - Pacote 100\",\"discount\":0,\"optionalPrice\":{\"monthly\":69,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":14,\"planId\":3,\"name\":\"Alçadas de aprovação\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":18,\"planId\":3,\"name\":\"Mão de obra\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":19,\"planId\":3,\"name\":\"Integração Asaas\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false}],\"planPrice\":{\"monthly\":599,\"quarterly\":569.05,\"semiAnnual\":539.1,\"annual\":509.15},\"membershipRate\":0,\"discount\":0,\"isSelected\":false,\"proposalPeriod\":null},{\"id\":null,\"planId\":4,\"name\":\"Da Vinci\",\"quantityProject\":0,\"quantityUser\":0,\"quantityDisk\":15000,\"optionals\":[{\"extraId\":5,\"planId\":4,\"name\":\"Aplicativo móvel\",\"discount\":0,\"optionalPrice\":{\"monthly\":0,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":6,\"planId\":4,\"name\":\"Portal do cliente\",\"discount\":0,\"optionalPrice\":{\"monthly\":0,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":10,\"planId\":4,\"name\":\"Controle de estoque\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":12,\"planId\":4,\"name\":\"Integração NF-e - Pacote 100\",\"discount\":0,\"optionalPrice\":{\"monthly\":69,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":14,\"planId\":4,\"name\":\"Alçadas de aprovação\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":18,\"planId\":4,\"name\":\"Mão de obra\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":19,\"planId\":4,\"name\":\"Integração Asaas\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false}],\"planPrice\":{\"monthly\":799,\"quarterly\":759.05,\"semiAnnual\":719.1,\"annual\":679.15},\"membershipRate\":0,\"discount\":0,\"isSelected\":false,\"proposalPeriod\":null},{\"id\":null,\"planId\":16,\"name\":\"Munch\",\"quantityProject\":0,\"quantityUser\":0,\"quantityDisk\":30000,\"optionals\":[{\"extraId\":5,\"planId\":16,\"name\":\"Aplicativo móvel\",\"discount\":0,\"optionalPrice\":{\"monthly\":0,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":6,\"planId\":16,\"name\":\"Portal do cliente\",\"discount\":0,\"optionalPrice\":{\"monthly\":0,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":10,\"planId\":16,\"name\":\"Controle de estoque\",\"discount\":0,\"optionalPrice\":{\"monthly\":0,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":12,\"planId\":16,\"name\":\"Integração NF-e - Pacote 100\",\"discount\":0,\"optionalPrice\":{\"monthly\":0,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":14,\"planId\":16,\"name\":\"Alçadas de aprovação\",\"discount\":0,\"optionalPrice\":{\"monthly\":0,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":18,\"planId\":16,\"name\":\"Mão de obra\",\"discount\":0,\"optionalPrice\":{\"monthly\":0,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false},{\"extraId\":19,\"planId\":16,\"name\":\"Integração Asaas\",\"discount\":0,\"optionalPrice\":{\"monthly\":99,\"quarterly\":0,\"semiAnnual\":0,\"annual\":0},\"isSelected\":false,\"isOptional\":false}],\"planPrice\":{\"monthly\":999,\"quarterly\":949.05,\"semiAnnual\":899.1,\"annual\":849.15},\"membershipRate\":0,\"discount\":0,\"isSelected\":false,\"proposalPeriod\":null}],\"isSuccess\":true,\"message\":\"\",\"errors\":null}";
-    private string Period = "Monthly";
-    private double PriceSelected = 0.00;
+    private string _period = "Monthly";
+    private double _priceSelected = 0.00;
+    private double _priceOptionalSelected = 0.00;
+    private double _discountPlan = 0.00;
+    private double _discountCondition = 0.00;
+    private string _discountType = "Boleto";
 
     private List<Proposal>? Proposals { get; set; } = null!;
     private List<Proposal.Optional>? BaseOptionals { get; set; } = null!;
 
     async Task HandleChangePeriod(ChangeEventArgs args)
-        => Period = args.Value.ToString();
+    {
+        var plan = Proposals.FirstOrDefault(x => x.IsSelected);
 
+        _priceSelected -= plan?.PricePerPeriod[_period] ?? 0.0;
+
+        _period = args.Value.ToString();
+
+        _priceSelected += plan?.PricePerPeriod[_period] ?? 0.0;
+    }
+
+    async Task HandleChangeCondition(ChangeEventArgs args)
+    {   
+        _discountType = args.Value.ToString();
+        
+    }
     async Task HandleChangeOptional(Proposal.Optional optional)
     {
-        // var a = args.Value.ToString();
         var plan = Proposals.FirstOrDefault(x => x.IsSelected);
         if (plan is null)
         {
@@ -212,32 +276,115 @@
         }
 
         optional.IsSelected = !optional.IsSelected;
-        plan.Optionals.FirstOrDefault(x => x.ExtraId == optional.ExtraId)!.IsSelected = optional.IsSelected;
 
         if (optional.IsSelected)
         {
-            PriceSelected += optional.OptionalPrice!.Monthly;
+            _priceOptionalSelected += optional.OptionalPrice!.Monthly;
         }
         else
         {
-            PriceSelected -= optional.OptionalPrice!.Monthly;
+            _priceOptionalSelected -= optional.OptionalPrice!.Monthly;
         }
     }
 
     async Task HandleClickSelectPlan(Proposal proposal)
     {
-        Proposals.ForEach(x => x.IsSelected = false);
+        var previousSelectedProposals = Proposals?.FirstOrDefault(x => x.IsSelected);
+        
+        if (previousSelectedProposals is not null && previousSelectedProposals == proposal)
+            return;
+        
+        if (previousSelectedProposals is not null)
+            ResetValuesPreviousSelectedPlan(previousSelectedProposals);
+
+        Proposals?.ForEach(x => x.IsSelected = false);
 
         proposal.IsSelected = !proposal.IsSelected;
 
+        if (proposal.IsSelected)
+        {
+            proposal.PricePerPeriod.TryGetValue(_period, out var price);
+            _priceSelected += price;
+        }
+        else
+        {
+            _priceSelected = 0.00;
+        }
+
         BaseOptionals = proposal.Optionals;
-        await ScrollToElementById("plan");
+    }
+
+    private void ResetValuesPreviousSelectedPlan(Proposal? previousSelectedProposal)
+    {
+        if (previousSelectedProposal is not null)
+            _priceSelected -= previousSelectedProposal.PricePerPeriod[_period];
+
+        Proposals?.ForEach(x => x.IsSelected = false);
+
+        var previousSelectedOptional = previousSelectedProposal?.Optionals;
+        if (previousSelectedOptional != null)
+            ResetValuesPreviousSelectedOptionals(previousSelectedOptional);
+    }
+
+    private void ResetValuesPreviousSelectedOptionals(IEnumerable<Proposal.Optional> previousSelectedOptional)
+    {
+        foreach (var optional in previousSelectedOptional.Where(x => x.IsSelected).ToList())
+        {
+            optional.IsSelected = false;
+            _priceOptionalSelected -= optional.OptionalPrice!.Monthly;
+        }
+    }
+    
+    private string GetDiscountPlan(Proposal proposal)
+    {
+        var pricePerPeriod = proposal.PricePerPeriod[_period];
+        var priceDefault = proposal.PlanPrice.Monthly;
+        
+        var percentage = (priceDefault - pricePerPeriod) / priceDefault * 100;
+        
+        percentage = Math.Round(percentage, 2);
+        
+        var priceDiscountPlan = priceDefault - pricePerPeriod;
+        _discountPlan = priceDiscountPlan == 0 ? priceDiscountPlan : -priceDiscountPlan;
+        
+        return _period switch
+        {
+            "Monthly" => $"Mensal",
+            "Quarterly" => $"Trimestral - {percentage}%",
+            "SemiAnnual" => $"Semestral - {percentage}%",
+            "Annual" => $"Anual - {percentage}%",
+            _ => string.Empty
+        };
+    }
+    private string GetDiscountCondition(Proposal proposal)
+    {
+        
+        var priceDefault = proposal.PlanPrice.Monthly;
+        var discountPercentage = _discountType switch
+        {
+            "Boleto" => 0,
+            "CR" => .05,
+            "CPU" => .1,
+            _ => 0
+        };
+
+        var discount = priceDefault * discountPercentage;
+        
+        _discountCondition = discount == 0 ? discount : -discount;
+        
+        return _discountType switch
+        {
+            "Boleto" => "Boleto",
+            "CR" => "Cartão recorrente - 5%",
+            "CPU" => "Cartão (pg único) - 10%",
+            _ => string.Empty
+        };
     }
 
     private async Task ScrollToElementById(string elementId)
     {
-        var clientHeight = await JSRuntime.InvokeAsync<int>("eval", $"document.getElementById('{elementId}').clientHeight");
-        await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, clientHeight);
+        var clientHeight = await JsRuntime.InvokeAsync<int>("eval", $"document.getElementById('{elementId}').clientHeight");
+        await JsRuntime.InvokeVoidAsync("window.scrollTo", 0, clientHeight);
     }
 
     protected override async Task OnInitializedAsync()
@@ -247,12 +394,12 @@
             PropertyNameCaseInsensitive = true
         });
 
-        Proposals = response.Data.Deserialize<List<Proposal>?>(new JsonSerializerOptions()
+        Proposals = response?.Data.Deserialize<List<Proposal>?>(new JsonSerializerOptions()
         {
             PropertyNameCaseInsensitive = true
         });
 
-        BaseOptionals = Proposals.FirstOrDefault()?.Optionals;
+        BaseOptionals = Proposals?.FirstOrDefault()?.Optionals;
     }
 
     public class Proposal
@@ -263,7 +410,7 @@
         public int QuantityProject { get; set; }
         public int QuantityUser { get; set; }
         public int QuantityDisk { get; set; }
-        public List<Optional> Optionals { get; set; }
+        public List<Optional>? Optionals { get; set; }
         public Price PlanPrice { get; set; } = new();
 
         public Dictionary<string, double> PricePerPeriod => new()
@@ -310,6 +457,7 @@
             public double Annual { get; set; }
         }
     }
-
+    
+    
+    
 }
-

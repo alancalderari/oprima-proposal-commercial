@@ -4,15 +4,15 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar Style="@($"background-color: {Colors.Grey.Lighten5}")" Elevation="3">
+    <MudAppBar Style="@($"background-color: {Colors.Grey.Lighten5}")" Fixed="false" Elevation="3">
         <MudAppBarTitle>
             <a class="navbar-brand ps-2" href="https://obraprima.eng.br/" target="_blank">
                 <img src="https://obraprima.eng.br/static/images/logo-obra-prima.png" width="50%" alt="Obra Prima"/>
             </a>
         </MudAppBarTitle>
     </MudAppBar>
-    <MudMainContent>
-        <MudContainer Class="pa-0" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MudMainContent Class="pa-0">
+        <MudContainer Style="height: 100vh !important;" Class="pa-0" MaxWidth="MaxWidth.ExtraExtraLarge">
             @Body
         </MudContainer>
     </MudMainContent>

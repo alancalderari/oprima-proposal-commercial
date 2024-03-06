@@ -4,7 +4,7 @@
     --text-mark: #ff8c00;
     --color-check: #77E64A;
     --color-close: #E58B13;
-    --bg-sky-900: rgb(12 74 110);
+    --color-sky-900: rgb(12 74 110);
 }
 
 table td,
@@ -171,7 +171,7 @@ thead {
 
 #plan .card {
     transition: box-shadow 0.3s ease, margin 0.3s ease, border 0.3s ease; /* Transições suavizadas */
-    border: 2px solid var(--bg-sky-900); /* Bordas transparentes por padrão para manter o layout */
+    border: 2px solid var(--color-sky-900); /* Bordas transparentes por padrão para manter o layout */
 }
 
 #plan .card.selected {
@@ -187,7 +187,10 @@ thead {
 }
 
 .bg-sky-900 {
-    background-color: var(--bg-sky-900) !important;
+    background-color: var(--color-sky-900) !important;
+}
+.text-sky-900 {
+    color: var(--color-sky-900) !important;
 }
 
 .btn-orange {
@@ -208,6 +211,16 @@ thead {
 .btn-check:not(:checked):hover + .btn, .btn:hover {
     background-color: #cc7000 !important;
     color: #fff !important;
+}
+
+.form-switch .form-check-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--color-sky-900) !important;
+    border-color: var(--color-sky-900) !important;
 }
 
 .fs-7 {
