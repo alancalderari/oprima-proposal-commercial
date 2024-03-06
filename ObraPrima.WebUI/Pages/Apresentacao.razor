@@ -63,7 +63,7 @@
                                 </ul>
                                 <div class="my-3 ">
                                     <h3 class="card-title">
-                                        <span class="fs-2">R$ @(_period == "Monthly" ? proposal.PricePerPeriod[_period] : proposal.PricePerPeriod[_period].ToString("N2"))</span>
+                                        <span class="fs-2">R$ @(proposal.PlanPrice.Monthly.ToString("N2"))</span>
                                         <br/>
                                         <small class="float-end fs-6 text-muted">/ <span>mês</span></small>
                                     </h3>
@@ -87,23 +87,21 @@
                                                     </div>
                                                 }
                                             </td>
-                                            @if (optional.OptionalPrice!.Monthly > 0 && !optional.IsSelected)
+                                            @if (optional.IsOptional)
                                             {
-                                                <td style="width: 60px;" class="fs-7 text-start fw-bold pa-0">R$ @optional.OptionalPrice!.Monthly</td>
+                                                <td style="width: 60px;" class="fs-7 text-end p-0">
+                                                    <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Check"/>
+                                                </td>
                                             }
                                             else
                                             {
-                                                <td style="width: 60px;" class="fs-7 text-end p-0">
-                                                    <MudIcon Style="@($"color: var(--color-sky-900)")" Icon="@Icons.Material.Filled.Check"/>
-                                                </td>
+                                                <td style="width: 60px;" class="fs-7 text-start text-end fw-bold pa-0">R$ @optional.OptionalPrice!.Monthly</td>
                                             }
                                         </tr>
                                     }
                                     </tbody>
                                 </MudSimpleTable>
                             </div>
-                            @if (proposal.IsSelected)
-                            {
                                 <div class="pt-3">
                                     <MudSimpleTable Dense="true" Elevation="0">
                                         <tbody>
@@ -130,7 +128,6 @@
                                         </tbody>
                                     </MudSimpleTable>
                                 </div>
-                            }
                         </div>
                     </div>
                 </div>
