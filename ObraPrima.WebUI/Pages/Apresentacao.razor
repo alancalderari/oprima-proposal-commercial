@@ -122,8 +122,8 @@
                                         </td>
                                         <td class="pr-0 text-end">@_priceOptionalSelected.ToString("N2")</td>
                                     </tr>
-                                    @if (_period != nameof(proposal.PlanPrice.Monthly) && _discountType != "Boleto")
-                                    {
+                                   @*  @if (_period != nameof(proposal.PlanPrice.Monthly) && _discountType != "Boleto")
+                                    { *@
                                         <tr>
                                             <td class="px-1">Plano + adicionais</td>
                                             <td class="pr-0 text-end">R$ @((proposal.PricePerPeriod[_period] + _priceOptionalSelected).ToString("N2"))</td>
@@ -132,9 +132,9 @@
                                             <td class="px-1">Desconto @GetDiscountCondition(proposal)</td>
                                             <td class="@(_discountCondition == 0 ? "" : "text-danger") pr-0 text-end">@_discountCondition.ToString("N2")</td>
                                         </tr>
-                                    }
+                                    @* } *@
                                     <tr>
-                                        <td class="px-1 fs-5 fw-bold">Valor mensalidade</td>
+                                        <td class="px-1 fs-5 fw-bold">Valor mensalidade </td>
                                         <td class="text-end fs-5 pr-0 fw-bold">@((proposal.PricePerPeriod[_period] + _discountCondition + _priceOptionalSelected).ToString("N2"))</td>
                                     </tr>
                                     </tbody>
